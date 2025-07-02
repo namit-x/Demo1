@@ -1,21 +1,28 @@
 import { useState, useEffect, useRef } from "react"
+import { motion } from "framer-motion"
+import type { Variants } from "framer-motion";
 import { Building2, Phone, Mail, MapPin, ArrowRight, Quote, ChevronLeft, ChevronRight } from "lucide-react"
+import ScrollReveal from "./ScrollReveal"
 
-export default function Homepage() {
+interface HomepageProps {
+  isVisible?: boolean
+}
+
+export default function Homepage({ isVisible = true }: HomepageProps) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   const testimonials = [
     {
       quote:
-        "RK Home Design transformed our vision into a masterpiece. Their attention to detail and innovative approach exceeded all expectations.",
+        "Line Architects transformed our vision into a masterpiece. Their attention to detail and innovative approach exceeded all expectations.",
       author: "Sarah Mitchell",
       role: "Homeowner",
       project: "Modern Villa, Beverly Hills",
     },
     {
       quote:
-        "Working with RK was an exceptional experience. They understood our brand and created a space that perfectly reflects our company values.",
+        "Working with Line Architects was an exceptional experience. They understood our brand and created a space that perfectly reflects our company values.",
       author: "David Chen",
       role: "CEO, Tech Innovations",
       project: "Corporate Headquarters",
@@ -85,10 +92,122 @@ export default function Homepage() {
     }
   }
 
+  /**
+   * Page-level animation variants for initial homepage entrance
+   * These control the overall fade-in when transitioning from loading page
+   */
+  const pageVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      scale: 1.02,
+      filter: "blur(8px)",
+      transition: {
+        duration: 0.6,
+        ease: [0.23, 0, 0.32, 0] // Reverse ease for exit
+      }
+    },
+    visible: {
+      opacity: 1,
+      scale: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 1.5,
+        ease: [0.23, 1, 0.32, 1], // Cubic bezier curve
+        staggerChildren: 0.1,
+        when: "beforeChildren" // Ensure parent animates first
+      }
+    },
+    exit: { // For AnimatePresence
+      opacity: 0,
+      scale: 0.98,
+      filter: "blur(8px)",
+      transition: {
+        duration: 0.8,
+        ease: "easeIn"
+      }
+    }
+  };
+
+  /**
+   * Section-level animation variants for initial page load
+   * These work in conjunction with scroll-triggered animations
+   */
+  const sectionVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: 30,
+      transition: {
+        // Adding exit transition for smoother hide
+        duration: 0.5,
+        ease: "easeIn"
+      }
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.8,
+        ease: "easeOut",
+        // Add stagger children capability
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    },
+    // Optional: Add a hover state variant
+    hover: {
+      scale: 1.02,
+      transition: {
+        duration: 0.3
+      }
+    }
+  };
+
+  /**
+   * Staggered animation variants for grid items and lists
+   * Creates a cascading effect for multiple elements
+   */
+  const staggerContainerVariants: Variants = {
+    hidden: {
+      opacity: 0
+    },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.15,
+        delayChildren: 0.2
+      }
+    }
+  };
+
+  const staggerItemVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: 20,
+      scale: 0.95
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      scale: 1,
+      transition: {
+        duration: 0.6,
+        ease: [0.25, 0.46, 0.45, 0.94]
+      }
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-black text-white">
-      {/* Enhanced Header */}
-      <header className="border-b border-white/10 relative z-50 bg-black/90 backdrop-blur-sm fixed w-full top-0">
+    <motion.div
+      className="min-h-screen bg-black text-white"
+      variants={pageVariants}
+      initial="hidden"
+      animate={isVisible ? "visible" : "hidden"}
+    >
+      {/* Enhanced Header with scroll reveal */}
+      <motion.header
+        className="border-b border-white/10 relative z-50 bg-black/90 backdrop-blur-sm fixed w-full top-0"
+        variants={sectionVariants}
+      >
         <div className="max-w-7xl mx-auto px-6 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -96,8 +215,8 @@ export default function Homepage() {
                 <Building2 className="w-6 h-6 text-white" strokeWidth={1} />
               </div>
               <div>
-                <h1 className="text-xl font-light tracking-[0.2em] uppercase font-cormorant">RK Home Design</h1>
-                <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Architects</p>
+                <h1 className="text-xl font-light tracking-[0.2em] uppercase font-cormorant">Line-Ar-chitects</h1>
+                <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Inspire</p>
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
@@ -114,10 +233,13 @@ export default function Homepage() {
             </nav>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       {/* Enhanced Hero Section */}
-      <section className="relative min-h-screen flex items-center overflow-hidden pt-20">
+      <motion.section
+        className="relative min-h-screen flex items-center overflow-hidden pt-20"
+        variants={sectionVariants}
+      >
         {/* Dynamic Background */}
         <div className="absolute inset-0">
           <div className="absolute inset-0 bg-gradient-to-br from-black via-gray-900 to-black opacity-90"></div>
@@ -144,18 +266,27 @@ export default function Homepage() {
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="max-w-4xl">
-            <h2 className="text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-tight leading-none font-playfair">
+            <motion.h2
+              className="text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-tight leading-none font-playfair"
+              variants={sectionVariants}
+            >
               DESIGNING
               <br />
               <span className="text-white/60">SPACES</span>
               <br />
               THAT INSPIRE
-            </h2>
-            <p className="text-xl md:text-2xl text-white/70 font-light leading-relaxed mb-12 max-w-3xl font-inter">
+            </motion.h2>
+            <motion.p
+              className="text-xl md:text-2xl text-white/70 font-light leading-relaxed mb-12 max-w-3xl font-inter"
+              variants={sectionVariants}
+            >
               We create architectural solutions that blend functionality with aesthetic excellence, transforming visions
               into remarkable living spaces that stand the test of time.
-            </p>
-            <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
+            </motion.p>
+            <motion.div
+              className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6"
+              variants={sectionVariants}
+            >
               <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center justify-center font-inter">
                 View Projects
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -163,7 +294,7 @@ export default function Homepage() {
               <button className="px-8 py-4 text-sm font-light tracking-wider uppercase text-white/70 hover:text-white transition-colors font-inter">
                 Learn More
               </button>
-            </div>
+            </motion.div>
           </div>
         </div>
 
@@ -172,377 +303,454 @@ export default function Homepage() {
         <div className="absolute top-24 right-8 w-20 h-20 border-r-2 border-t-2 border-white/20"></div>
         <div className="absolute bottom-8 left-8 w-20 h-20 border-l-2 border-b-2 border-white/20"></div>
         <div className="absolute bottom-8 right-8 w-20 h-20 border-r-2 border-b-2 border-white/20"></div>
-      </section>
+      </motion.section>
 
-      {/* Photo Grid Section */}
-      <section className="py-32 border-t border-white/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-20">
-            <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
-              Featured Projects
-            </h3>
-            <div className="w-24 h-px bg-white/30 mx-auto"></div>
-          </div>
-
-          {/* Asymmetrical Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[800px]">
-            <div className="md:col-span-2 md:row-span-2 group relative overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=800&fit=crop"
-                alt="Featured Project"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
-                <div className="p-8">
-                  <h4 className="text-2xl font-light mb-2 font-cormorant">Modern Villa Complex</h4>
-                  <p className="text-white/80 font-inter">Residential • 2024</p>
-                </div>
+      {/* Photo Grid Section with Advanced Scroll Animations */}
+      <ScrollReveal direction="up" distance={60} duration={1.0} threshold={0.2}>
+        <section className="py-32 border-t border-white/10">
+          <div className="max-w-7xl mx-auto px-6">
+            <ScrollReveal direction="fade" delay={200}>
+              <div className="text-center mb-20">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                  Featured Projects
+                </h3>
+                <div className="w-24 h-px bg-white/30 mx-auto"></div>
               </div>
-            </div>
+            </ScrollReveal>
 
-            <div className="group relative overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=400&fit=crop"
-                alt="Project 2"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
-                <div className="p-6">
-                  <h4 className="text-lg font-light mb-1 font-cormorant">Urban Loft</h4>
-                  <p className="text-white/80 text-sm font-inter">Interior • 2024</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="group relative overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=400&fit=crop"
-                alt="Project 3"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
-                <div className="p-6">
-                  <h4 className="text-lg font-light mb-1 font-cormorant">Corporate HQ</h4>
-                  <p className="text-white/80 text-sm font-inter">Commercial • 2023</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="md:col-span-2 group relative overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=400&fit=crop"
-                alt="Project 4"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
-                <div className="p-8">
-                  <h4 className="text-xl font-light mb-2 font-cormorant">Cultural Center</h4>
-                  <p className="text-white/80 font-inter">Public Architecture • 2023</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Horizontal Scrolling Projects Section */}
-      <section className="py-32 border-t border-white/10 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex justify-between items-center mb-16">
-            <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase font-cormorant">Recent Work</h3>
-            <div className="flex space-x-4">
-              <button
-                onClick={() => scrollProjects("left")}
-                className="p-3 border border-white/20 hover:border-white/40 transition-colors"
+            {/* Asymmetrical Grid with Staggered Animations */}
+            <motion.div 
+              className="grid grid-cols-1 md:grid-cols-4 gap-4 h-[800px]"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <motion.div 
+                className="md:col-span-2 md:row-span-2 group relative overflow-hidden"
+                variants={staggerItemVariants}
               >
-                <ChevronLeft className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => scrollProjects("right")}
-                className="p-3 border border-white/20 hover:border-white/40 transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          <div ref={scrollRef} className="flex space-x-8 overflow-x-auto scrollbar-hide pb-4">
-            {projects.map((project) => (
-              <div key={project.id} className="flex-none w-80 group">
-                <div className="relative overflow-hidden mb-4">
-                  <img
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105"
-                  />
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-black/60 backdrop-blur-sm text-xs tracking-wider uppercase font-inter">
-                      {project.category}
-                    </span>
+                <img
+                  src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=800&fit=crop"
+                  alt="Featured Project"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
+                  <div className="p-8">
+                    <h4 className="text-2xl font-light mb-2 font-cormorant">Modern Villa Complex</h4>
+                    <p className="text-white/80 font-inter">Residential • 2024</p>
                   </div>
                 </div>
-                <h4 className="text-xl font-light tracking-wide font-cormorant">{project.title}</h4>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              </motion.div>
 
-      {/* Enhanced Services Section */}
-      <section className="py-32 border-t border-white/10 relative">
-        <div className="absolute inset-0 opacity-[0.02]">
-          <img
-            src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=800&fit=crop"
-            alt="Services Background"
-            className="w-full h-full object-cover"
-            style={{ filter: "invert(1) contrast(1.5)" }}
-          />
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
-            <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
-              Our Expertise
-            </h3>
-            <div className="w-24 h-px bg-white/30 mx-auto"></div>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-16">
-            {[
-              {
-                title: "Residential Design",
-                description:
-                  "Custom home designs that reflect your lifestyle and aesthetic preferences, creating spaces that inspire daily living.",
-                features: ["Custom Architecture", "Interior Planning", "Landscape Integration"],
-              },
-              {
-                title: "Commercial Spaces",
-                description:
-                  "Innovative commercial architecture that enhances business environments and drives success through thoughtful design.",
-                features: ["Office Design", "Retail Spaces", "Hospitality"],
-              },
-              {
-                title: "Interior Planning",
-                description:
-                  "Comprehensive interior design solutions for optimal space utilization, combining functionality with aesthetic excellence.",
-                features: ["Space Planning", "Material Selection", "Lighting Design"],
-              },
-            ].map((service, index) => (
-              <div key={index} className="text-center group">
-                <div className="w-20 h-20 border border-white/20 rounded-sm mx-auto mb-8 flex items-center justify-center group-hover:border-white/40 transition-colors duration-500">
-                  <Building2 className="w-10 h-10 text-white" strokeWidth={1} />
+              <motion.div 
+                className="group relative overflow-hidden"
+                variants={staggerItemVariants}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=400&fit=crop"
+                  alt="Project 2"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
+                  <div className="p-6">
+                    <h4 className="text-lg font-light mb-1 font-cormorant">Urban Loft</h4>
+                    <p className="text-white/80 text-sm font-inter">Interior • 2024</p>
+                  </div>
                 </div>
-                <h4 className="text-2xl font-light tracking-wider uppercase mb-6 font-cormorant">{service.title}</h4>
-                <p className="text-white/70 font-light leading-relaxed mb-6 font-inter">{service.description}</p>
-                <ul className="space-y-2">
-                  {service.features.map((feature, idx) => (
-                    <li key={idx} className="text-white/60 text-sm tracking-wide font-inter">
-                      {feature}
+              </motion.div>
+
+              <motion.div 
+                className="group relative overflow-hidden"
+                variants={staggerItemVariants}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=400&fit=crop"
+                  alt="Project 3"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
+                  <div className="p-6">
+                    <h4 className="text-lg font-light mb-1 font-cormorant">Corporate HQ</h4>
+                    <p className="text-white/80 text-sm font-inter">Commercial • 2023</p>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div 
+                className="md:col-span-2 group relative overflow-hidden"
+                variants={staggerItemVariants}
+              >
+                <img
+                  src="https://images.unsplash.com/photo-1511818966892-d7d671e672a2?w=800&h=400&fit=crop"
+                  alt="Project 4"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
+                  <div className="p-8">
+                    <h4 className="text-xl font-light mb-2 font-cormorant">Cultural Center</h4>
+                    <p className="text-white/80 font-inter">Public Architecture • 2023</p>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Horizontal Scrolling Projects Section with Left Slide Animation */}
+      <ScrollReveal direction="left" distance={80} duration={1.2} threshold={0.15}>
+        <section className="py-32 border-t border-white/10 overflow-hidden">
+          <div className="max-w-7xl mx-auto px-6">
+            <ScrollReveal direction="right" distance={60} delay={300}>
+              <div className="flex justify-between items-center mb-16">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase font-cormorant">Recent Work</h3>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => scrollProjects("left")}
+                    className="p-3 border border-white/20 hover:border-white/40 transition-colors"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    onClick={() => scrollProjects("right")}
+                    className="p-3 border border-white/20 hover:border-white/40 transition-colors"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" distance={40} delay={500} staggerChildren={0.1}>
+              <div ref={scrollRef} className="flex space-x-8 overflow-x-auto scrollbar-hide pb-4">
+                {projects.map((project, index) => (
+                  <motion.div 
+                    key={project.id} 
+                    className="flex-none w-80 group"
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ 
+                      duration: 0.6, 
+                      delay: index * 0.1,
+                      ease: [0.25, 0.46, 0.45, 0.94]
+                    }}
+                    viewport={{ once: true, amount: 0.3 }}
+                  >
+                    <div className="relative overflow-hidden mb-4">
+                      <img
+                        src={project.image || "/placeholder.svg"}
+                        alt={project.title}
+                        className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105"
+                      />
+                      <div className="absolute top-4 left-4">
+                        <span className="px-3 py-1 bg-black/60 backdrop-blur-sm text-xs tracking-wider uppercase font-inter">
+                          {project.category}
+                        </span>
+                      </div>
+                    </div>
+                    <h4 className="text-xl font-light tracking-wide font-cormorant">{project.title}</h4>
+                  </motion.div>
+                ))}
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Enhanced Services Section with Scale Animation */}
+      <ScrollReveal direction="scale" duration={1.0} threshold={0.2}>
+        <section className="py-32 border-t border-white/10 relative">
+          <div className="absolute inset-0 opacity-[0.02]">
+            <img
+              src="https://images.unsplash.com/photo-1600607687644-c7171b42498b?w=1200&h=800&fit=crop"
+              alt="Services Background"
+              className="w-full h-full object-cover"
+              style={{ filter: "invert(1) contrast(1.5)" }}
+            />
+          </div>
+
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <ScrollReveal direction="fade" delay={200}>
+              <div className="text-center mb-20">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                  Our Expertise
+                </h3>
+                <div className="w-24 h-px bg-white/30 mx-auto"></div>
+              </div>
+            </ScrollReveal>
+
+            <motion.div 
+              className="grid md:grid-cols-3 gap-16"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              {[
+                {
+                  title: "Residential Design",
+                  description:
+                    "Custom home designs that reflect your lifestyle and aesthetic preferences, creating spaces that inspire daily living.",
+                  features: ["Custom Architecture", "Interior Planning", "Landscape Integration"],
+                },
+                {
+                  title: "Commercial Spaces",
+                  description:
+                    "Innovative commercial architecture that enhances business environments and drives success through thoughtful design.",
+                  features: ["Office Design", "Retail Spaces", "Hospitality"],
+                },
+                {
+                  title: "Interior Planning",
+                  description:
+                    "Comprehensive interior design solutions for optimal space utilization, combining functionality with aesthetic excellence.",
+                  features: ["Space Planning", "Material Selection", "Lighting Design"],
+                },
+              ].map((service, index) => (
+                <motion.div 
+                  key={index} 
+                  className="text-center group"
+                  variants={staggerItemVariants}
+                >
+                  <div className="w-20 h-20 border border-white/20 rounded-sm mx-auto mb-8 flex items-center justify-center group-hover:border-white/40 transition-colors duration-500">
+                    <Building2 className="w-10 h-10 text-white" strokeWidth={1} />
+                  </div>
+                  <h4 className="text-2xl font-light tracking-wider uppercase mb-6 font-cormorant">{service.title}</h4>
+                  <p className="text-white/70 font-light leading-relaxed mb-6 font-inter">{service.description}</p>
+                  <ul className="space-y-2">
+                    {service.features.map((feature, idx) => (
+                      <li key={idx} className="text-white/60 text-sm tracking-wide font-inter">
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </motion.div>
+              ))}
+            </motion.div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Testimonials Section with Fade Animation */}
+      <ScrollReveal direction="fade" duration={1.2} threshold={0.3}>
+        <section className="py-32 border-t border-white/10 relative">
+          <div className="absolute inset-0 opacity-[0.03]">
+            <img
+              src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop"
+              alt="Testimonials Background"
+              className="w-full h-full object-cover"
+              style={{ filter: "invert(1) contrast(2)" }}
+            />
+          </div>
+
+          <div className="max-w-4xl mx-auto px-6 relative z-10">
+            <ScrollReveal direction="down" distance={40} delay={300}>
+              <div className="text-center mb-20">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                  Client Stories
+                </h3>
+                <div className="w-24 h-px bg-white/30 mx-auto"></div>
+              </div>
+            </ScrollReveal>
+
+            <ScrollReveal direction="up" distance={50} delay={600}>
+              <div className="relative">
+                <div className="text-center">
+                  <Quote className="w-12 h-12 text-white/30 mx-auto mb-8" />
+                  <blockquote className="text-2xl md:text-3xl font-light leading-relaxed mb-8 text-white/90 font-cormorant">
+                    "{testimonials[currentTestimonial].quote}"
+                  </blockquote>
+                  <div className="space-y-2">
+                    <p className="text-lg font-light tracking-wide font-inter">{testimonials[currentTestimonial].author}</p>
+                    <p className="text-white/60 text-sm tracking-wider uppercase font-inter">
+                      {testimonials[currentTestimonial].role}
+                    </p>
+                    <p className="text-white/40 text-xs tracking-wider font-inter">
+                      {testimonials[currentTestimonial].project}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Testimonial indicators */}
+                <div className="flex justify-center space-x-2 mt-12">
+                  {testimonials.map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setCurrentTestimonial(index)}
+                      className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                        index === currentTestimonial ? "bg-white" : "bg-white/30"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Enhanced Contact Section with Right Slide Animation */}
+      <ScrollReveal direction="right" distance={70} duration={1.0} threshold={0.2}>
+        <section className="py-32 border-t border-white/10 relative">
+          <div className="max-w-7xl mx-auto px-6 relative z-10">
+            <motion.div 
+              className="grid md:grid-cols-2 gap-20"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+            >
+              <motion.div variants={staggerItemVariants}>
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-12 font-cormorant">
+                  Start Your Project
+                </h3>
+                <div className="space-y-8">
+                  <div className="flex items-center space-x-6">
+                    <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
+                      <Phone className="w-5 h-5 text-white/60" strokeWidth={1} />
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Phone</p>
+                      <span className="font-light text-lg font-inter">+1 (555) 123-4567</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-6">
+                    <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
+                      <Mail className="w-5 h-5 text-white/60" strokeWidth={1} />
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Email</p>
+                      <span className="font-light text-lg font-inter">info@rkhomedesign.com</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-6">
+                    <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
+                      <MapPin className="w-5 h-5 text-white/60" strokeWidth={1} />
+                    </div>
+                    <div>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Studio</p>
+                      <span className="font-light text-lg font-inter">123 Design Street, Architecture City</span>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+
+              <motion.div variants={staggerItemVariants}>
+                <form className="space-y-8">
+                  <div className="grid md:grid-cols-2 gap-6">
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="First Name"
+                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Last Name"
+                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <input
+                      type="email"
+                      placeholder="Email Address"
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="Project Type"
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                    />
+                  </div>
+                  <div>
+                    <textarea
+                      placeholder="Tell us about your project..."
+                      rows={4}
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors resize-none font-inter"
+                    ></textarea>
+                  </div>
+                  <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center font-inter">
+                    Send Message
+                    <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </form>
+              </motion.div>
+            </motion.div>
+          </div>
+        </section>
+      </ScrollReveal>
+
+      {/* Enhanced Footer with Up Animation */}
+      <ScrollReveal direction="up" distance={40} duration={0.8} threshold={0.5}>
+        <footer className="border-t border-white/10 py-16">
+          <div className="max-w-7xl mx-auto px-6">
+            <motion.div 
+              className="grid md:grid-cols-4 gap-12 mb-12"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <motion.div className="md:col-span-2" variants={staggerItemVariants}>
+                <div className="flex items-center space-x-4 mb-6">
+                  <div className="p-2 border border-white/20 rounded-sm">
+                    <Building2 className="w-6 h-6 text-white" strokeWidth={1} />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-light tracking-[0.2em] uppercase font-cormorant">Line-Ar-chitects</h4>
+                    <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Inspire</p>
+                  </div>
+                </div>
+                <p className="text-white/60 font-light leading-relaxed max-w-md font-inter">
+                  Creating architectural solutions that blend functionality with aesthetic excellence, transforming
+                  visions into remarkable living spaces.
+                </p>
+              </motion.div>
+
+              <motion.div variants={staggerItemVariants}>
+                <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Services</h5>
+                <ul className="space-y-3">
+                  {["Residential Design", "Commercial Spaces", "Interior Planning", "Consultation"].map((service) => (
+                    <li key={service}>
+                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
+                        {service}
+                      </a>
                     </li>
                   ))}
                 </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+              </motion.div>
 
-      {/* Testimonials Section */}
-      <section className="py-32 border-t border-white/10 relative">
-        <div className="absolute inset-0 opacity-[0.03]">
-          <img
-            src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=1200&h=800&fit=crop"
-            alt="Testimonials Background"
-            className="w-full h-full object-cover"
-            style={{ filter: "invert(1) contrast(2)" }}
-          />
-        </div>
+              <motion.div variants={staggerItemVariants}>
+                <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Connect</h5>
+                <ul className="space-y-3">
+                  {["Instagram", "LinkedIn", "Behance", "Pinterest"].map((social) => (
+                    <li key={social}>
+                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
+                        {social}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+                </motion.div>
+            </motion.div>
 
-        <div className="max-w-4xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-20">
-            <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
-              Client Stories
-            </h3>
-            <div className="w-24 h-px bg-white/30 mx-auto"></div>
-          </div>
-
-          <div className="relative">
-            <div className="text-center">
-              <Quote className="w-12 h-12 text-white/30 mx-auto mb-8" />
-              <blockquote className="text-2xl md:text-3xl font-light leading-relaxed mb-8 text-white/90 font-cormorant">
-                "{testimonials[currentTestimonial].quote}"
-              </blockquote>
-              <div className="space-y-2">
-                <p className="text-lg font-light tracking-wide font-inter">{testimonials[currentTestimonial].author}</p>
-                <p className="text-white/60 text-sm tracking-wider uppercase font-inter">
-                  {testimonials[currentTestimonial].role}
-                </p>
-                <p className="text-white/40 text-xs tracking-wider font-inter">
-                  {testimonials[currentTestimonial].project}
-                </p>
-              </div>
-            </div>
-
-            {/* Testimonial indicators */}
-            <div className="flex justify-center space-x-2 mt-12">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentTestimonial(index)}
-                  className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                    index === currentTestimonial ? "bg-white" : "bg-white/30"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Enhanced Contact Section */}
-      <section className="py-32 border-t border-white/10 relative">
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid md:grid-cols-2 gap-20">
-            <div>
-              <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-12 font-cormorant">
-                Start Your Project
-              </h3>
-              <div className="space-y-8">
-                <div className="flex items-center space-x-6">
-                  <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
-                    <Phone className="w-5 h-5 text-white/60" strokeWidth={1} />
-                  </div>
-                  <div>
-                    <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Phone</p>
-                    <span className="font-light text-lg font-inter">+1 (555) 123-4567</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-6">
-                  <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
-                    <Mail className="w-5 h-5 text-white/60" strokeWidth={1} />
-                  </div>
-                  <div>
-                    <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Email</p>
-                    <span className="font-light text-lg font-inter">info@rkhomedesign.com</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-6">
-                  <div className="w-12 h-12 border border-white/20 rounded-sm flex items-center justify-center">
-                    <MapPin className="w-5 h-5 text-white/60" strokeWidth={1} />
-                  </div>
-                  <div>
-                    <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Studio</p>
-                    <span className="font-light text-lg font-inter">123 Design Street, Architecture City</span>
-                  </div>
+            <ScrollReveal direction="fade" delay={400}>
+              <div className="border-t border-white/10 pt-8">
+                <div className="text-center">
+                  <p className="text-white/40 text-sm font-light tracking-wider font-inter">
+                    © 2025 Line Architects. All rights reserved.
+                  </p>
                 </div>
               </div>
-            </div>
-
-            <div>
-              <form className="space-y-8">
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="First Name"
-                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
-                    />
-                  </div>
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Last Name"
-                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
-                  />
-                </div>
-                <div>
-                  <input
-                    type="text"
-                    placeholder="Project Type"
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
-                  />
-                </div>
-                <div>
-                  <textarea
-                    placeholder="Tell us about your project..."
-                    rows={4}
-                    className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors resize-none font-inter"
-                  ></textarea>
-                </div>
-                <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center font-inter">
-                  Send Message
-                  <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </button>
-              </form>
-            </div>
+            </ScrollReveal>
           </div>
-        </div>
-      </section>
-
-      {/* Enhanced Footer */}
-      <footer className="border-t border-white/10 py-16">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center space-x-4 mb-6">
-                <div className="p-2 border border-white/20 rounded-sm">
-                  <Building2 className="w-6 h-6 text-white" strokeWidth={1} />
-                </div>
-                <div>
-                  <h4 className="text-lg font-light tracking-[0.2em] uppercase font-cormorant">RK Home Design</h4>
-                  <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Architects</p>
-                </div>
-              </div>
-              <p className="text-white/60 font-light leading-relaxed max-w-md font-inter">
-                Creating architectural solutions that blend functionality with aesthetic excellence, transforming
-                visions into remarkable living spaces.
-              </p>
-            </div>
-
-            <div>
-              <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Services</h5>
-              <ul className="space-y-3">
-                {["Residential Design", "Commercial Spaces", "Interior Planning", "Consultation"].map((service) => (
-                  <li key={service}>
-                    <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
-                      {service}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            <div>
-              <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Connect</h5>
-              <ul className="space-y-3">
-                {["Instagram", "LinkedIn", "Behance", "Pinterest"].map((social) => (
-                  <li key={social}>
-                    <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
-                      {social}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          <div className="border-t border-white/10 pt-8">
-            <div className="text-center">
-              <p className="text-white/40 text-sm font-light tracking-wider font-inter">
-                © 2025 RK Home Design Architects. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </div>
+        </footer>
+      </ScrollReveal>
+    </motion.div>
   )
 }

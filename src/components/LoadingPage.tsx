@@ -37,7 +37,7 @@ const LoadingPage: React.FC = () => {
     const timer1 = setTimeout(() => setAnimationPhase('nameFormed'), 3000);
     
     // Phase 2: Premium elements fade in (3-6s)
-    const timer2 = setTimeout(() => setAnimationPhase('elementsVisible'), 6000);
+    const timer2 = setTimeout(() => setAnimationPhase('elementsVisible'), 4000);
     
     // Phase 3: Everything fades out and homepage appears (8-9s)
     const timer3 = setTimeout(() => setAnimationPhase('fadeOut'), 8000);
