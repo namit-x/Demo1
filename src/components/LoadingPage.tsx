@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from 'framer-motion';
 import { Building2 } from 'lucide-react';
 
 const LoadingPage: React.FC = () => {
@@ -50,46 +51,46 @@ const LoadingPage: React.FC = () => {
     };
   }, []);
 
-  const letterVariants = {
-    initial: (index: number) => ({
-      x: getRandomPosition(index).x,
-      y: getRandomPosition(index).y,
-      opacity: 0,
-      scale: 0.3,
-      rotate: Math.random() * 720 - 360,
-      filter: "blur(15px)",
-    }),
-    collecting: (index: number) => ({
-      x: 0,
-      y: 0,
-      opacity: 1,
-      scale: 1,
-      rotate: 0,
-      filter: "blur(0px)",
-      transition: {
-        duration: 2.5,
-        delay: index * 0.08,
-        ease: [0.23, 1, 0.32, 1],
-      },
-    }),
-    formed: {
-      scale: 1,
-      textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
-      transition: {
-        duration: 0.8,
-        ease: "easeOut",
-      },
+const letterVariants: Variants = {
+  initial: (index: number) => ({
+    x: getRandomPosition(index).x,
+    y: getRandomPosition(index).y,
+    opacity: 0,
+    scale: 0.3,
+    rotate: Math.random() * 720 - 360,
+    filter: "blur(15px)",
+  }),
+  collecting: (index: number) => ({
+    x: 0,
+    y: 0,
+    opacity: 1,
+    scale: 1,
+    rotate: 0,
+    filter: "blur(0px)",
+    transition: {
+      duration: 2.5,
+      delay: index * 0.08,
+      ease: [0.23, 1, 0.32, 1], // Cubic bezier curve format is correct
     },
-  };
+  }),
+  formed: {
+    scale: 1,
+    textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
+    transition: {
+      duration: 0.8,
+      ease: "easeOut", // Using Framer Motion's predefined easing
+    },
+  },
+};
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     fadeOut: {
       opacity: 0,
       scale: 0.95,
       filter: "blur(8px)",
       transition: {
         duration: 1,
-        ease: "easeInOut",
+        ease: "easeInOut", // or use an array like [0.17, 0.67, 0.83, 0.67]
       },
     },
   };
