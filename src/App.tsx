@@ -11,12 +11,12 @@ function App() {
     // Start homepage transition slightly before loading page fully fades
     const homepageTimer = setTimeout(() => {
       setShowHomePage(true);
-    }, 8500); // Start homepage fade-in 0.5s before loading completes
+    }, 2000); // Start homepage fade-in 0.5s before loading completes
 
     // Mark loading as complete
     const loadingTimer = setTimeout(() => {
       setLoadingComplete(true);
-    }, 9000); // Total loading duration: 9 seconds
+    }, 2200); // Total loading duration: 9 seconds
 
     return () => {
       clearTimeout(homepageTimer);
@@ -28,7 +28,7 @@ function App() {
     <div className="relative">
       <AnimatePresence mode="wait">
         {!loadingComplete && (
-          <LoadingPage key="loading" />
+          <LoadingPage key="loading" onComplete={() => setLoadingComplete(true)} />
         )}
       </AnimatePresence>
       

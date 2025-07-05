@@ -1,365 +1,136 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import type { Variants } from 'framer-motion';
-import { Building2 } from 'lucide-react';
+import type React from "react"
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { Building2 } from "lucide-react"
 
-const LoadingPage: React.FC = () => {
-  const [animationPhase, setAnimationPhase] = useState('initial'); // initial, nameFormed, elementsVisible, fadeOut
-  const [showHomePage, setShowHomePage] = useState(false);
+interface LoadingPageProps {
+  onComplete: () => void
+}
 
-  const companyName = "Line-Ar-chitects";
-  const letters = companyName.split("");
-
-  // Generate random starting positions for each letter
-  const getRandomPosition = (index: number) => {
-    const positions = [
-      { x: -400, y: -300 },
-      { x: 400, y: -300 },
-      { x: -500, y: 0 },
-      { x: 500, y: 0 },
-      { x: -400, y: 300 },
-      { x: 400, y: 300 },
-      { x: 0, y: -400 },
-      { x: 0, y: 400 },
-      { x: -600, y: -200 },
-      { x: 600, y: -200 },
-      { x: -600, y: 200 },
-      { x: 600, y: 200 },
-      { x: -300, y: -400 },
-      { x: 300, y: -400 },
-      { x: -700, y: 0 },
-    ];
-    return positions[index % positions.length];
-  };
+const LoadingPage: React.FC<LoadingPageProps> = ({ onComplete }) => {
+  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
-    // Phase 1: Letters collect and form company name (0-3s)
-    const timer1 = setTimeout(() => setAnimationPhase('nameFormed'), 3000);
-    
-    // Phase 2: Premium elements fade in (3-6s)
-    const timer2 = setTimeout(() => setAnimationPhase('elementsVisible'), 4000);
-    
-    // Phase 3: Everything fades out and homepage appears (8-9s)
-    const timer3 = setTimeout(() => setAnimationPhase('fadeOut'), 8000);
-    const timer4 = setTimeout(() => setShowHomePage(true), 9000);
+    // Fast progress animation over 800ms
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(interval)
+          setTimeout(() => onComplete(), 300)
+          return 100
+        }
+        return prev + 6 // Faster increment
+      })
+    }, 60) // 80ms intervals for 800ms total
 
-    return () => {
-      clearTimeout(timer1);
-      clearTimeout(timer2);
-      clearTimeout(timer3);
-      clearTimeout(timer4);
-    };
-  }, []);
-
-const letterVariants: Variants = {
-  initial: (index: number) => ({
-    x: getRandomPosition(index).x,
-    y: getRandomPosition(index).y,
-    opacity: 0,
-    scale: 0.3,
-    rotate: Math.random() * 720 - 360,
-    filter: "blur(15px)",
-  }),
-  collecting: (index: number) => ({
-    x: 0,
-    y: 0,
-    opacity: 1,
-    scale: 1,
-    rotate: 0,
-    filter: "blur(0px)",
-    transition: {
-      duration: 2.5,
-      delay: index * 0.08,
-      ease: [0.23, 1, 0.32, 1], // Cubic bezier curve format is correct
-    },
-  }),
-  formed: {
-    scale: 1,
-    textShadow: "0 0 30px rgba(255, 255, 255, 0.3)",
-    transition: {
-      duration: 0.8,
-      ease: "easeOut", // Using Framer Motion's predefined easing
-    },
-  },
-};
-
-  const containerVariants: Variants = {
-    fadeOut: {
-      opacity: 0,
-      scale: 0.95,
-      filter: "blur(8px)",
-      transition: {
-        duration: 1,
-        ease: "easeInOut", // or use an array like [0.17, 0.67, 0.83, 0.67]
-      },
-    },
-  };
-
-  if (showHomePage) {
-    return null; // Let App.tsx handle showing HomePage
-  }
+    return () => clearInterval(interval)
+  }, [onComplete])
 
   return (
-    <>
-      {/* Premium Typography */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@300;400;500;600;700&display=swap"
-        rel="stylesheet"
+    <motion.div
+      className="fixed inset-0 bg-black flex items-center justify-center"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Background grid */}
+      <div
+        className="absolute inset-0 opacity-[0.02]"
+        style={{
+          backgroundImage: `
+            linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
+          `,
+          backgroundSize: "60px 60px",
+        }}
       />
 
-      <div className="fixed inset-0 bg-black overflow-hidden">
-        {/* Subtle Background Elements */}
-        <div className="absolute inset-0">
-          {/* Minimal floating particles */}
-          {Array.from({ length: 20 }).map((_, i) => (
-            <motion.div
-              key={i}
-              className="absolute w-px h-px bg-white/20 rounded-full"
-              animate={{
-                x: [0, Math.random() * 100 - 50],
-                y: [0, Math.random() * 100 - 50],
-                opacity: [0, 0.6, 0],
-                scale: [0, 1, 0],
-              }}
-              transition={{
-                duration: Math.random() * 8 + 6,
-                repeat: Infinity,
-                delay: Math.random() * 4,
-                ease: "easeInOut",
-              }}
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-              }}
-            />
-          ))}
-
-          {/* Architectural grid - only visible when elements are shown */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ 
-              opacity: animationPhase === 'elementsVisible' ? 0.03 : 0 
-            }}
-            transition={{ duration: 2, delay: 0.5 }}
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: "80px 80px",
-            }}
-          />
-        </div>
-
-        {/* Main Content Container */}
-        <div className="relative z-10 flex items-center justify-center min-h-screen">
-          <motion.div
-            className="relative text-center"
-            variants={containerVariants}
-            animate={animationPhase === 'fadeOut' ? 'fadeOut' : ''}
-          >
-            {/* Golden Border Frame - Fades in after name is formed */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8, rotate: -2 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0.8,
-                rotate: animationPhase === 'elementsVisible' ? 0 : -2,
-              }}
-              transition={{ duration: 1.5, delay: 0.3, ease: "easeOut" }}
-              className="absolute inset-0 -m-20 rounded-sm"
-              style={{
-                background: "linear-gradient(45deg, transparent 48%, rgba(212, 175, 55, 0.1) 50%, transparent 52%)",
-                border: "1px solid rgba(212, 175, 55, 0.3)",
-                boxShadow: "0 0 40px rgba(212, 175, 55, 0.15), inset 0 0 40px rgba(212, 175, 55, 0.05)",
-              }}
-            />
-
-            {/* Corner Accent Elements */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0,
-              }}
-              transition={{ duration: 0.8, delay: 1, ease: "easeOut" }}
-              className="absolute -top-16 -left-16 w-8 h-8 border-l-2 border-t-2 border-amber-400/60"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0,
-              }}
-              transition={{ duration: 0.8, delay: 1.1, ease: "easeOut" }}
-              className="absolute -top-16 -right-16 w-8 h-8 border-r-2 border-t-2 border-amber-400/60"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0,
-              }}
-              transition={{ duration: 0.8, delay: 1.2, ease: "easeOut" }}
-              className="absolute -bottom-16 -left-16 w-8 h-8 border-l-2 border-b-2 border-amber-400/60"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0,
-              }}
-              transition={{ duration: 0.8, delay: 1.3, ease: "easeOut" }}
-              className="absolute -bottom-16 -right-16 w-8 h-8 border-r-2 border-b-2 border-amber-400/60"
-            />
-
-            {/* Company Name - Always Visible Once Formed */}
-            <div className="relative px-16 py-12">
-              <div
-                className="flex flex-wrap justify-center items-center gap-2 text-5xl md:text-7xl lg:text-8xl font-light text-white tracking-[0.15em] mb-8"
-                style={{
-                  fontFamily: "'Playfair Display', serif",
-                  fontWeight: 300,
-                }}
-              >
-                {letters.map((letter, index) => (
-                  <motion.span
-                    key={index}
-                    custom={index}
-                    variants={letterVariants}
-                    initial="initial"
-                    animate={
-                      animationPhase === 'initial' ? 'collecting' : 'collecting'
-                    }
-                    className="inline-block relative"
-                  >
-                    {letter === " " ? (
-                      <span className="w-4 inline-block" />
-                    ) : (
-                      <span className="relative">
-                        {letter}
-                      </span>
-                    )}
-                  </motion.span>
-                ))}
-              </div>
-
-              {/* Elegant Divider - Fades in after name is formed */}
-              <AnimatePresence>
-                {(animationPhase === 'nameFormed' || animationPhase === 'elementsVisible') && (
-                  <motion.div
-                    initial={{ width: 0, opacity: 0 }}
-                    animate={{ width: "100%", opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1.2, delay: 0.5, ease: "easeOut" }}
-                    className="flex items-center justify-center my-8"
-                  >
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/40 to-transparent w-full max-w-md" />
-                    <motion.div
-                      initial={{ scale: 0, rotate: 0 }}
-                      animate={{ scale: 1, rotate: 45 }}
-                      transition={{ duration: 0.8, delay: 1.2, ease: "easeOut" }}
-                      className="mx-4 w-2 h-2 border border-white/40 rotate-45 bg-white/10"
-                    />
-                    <div className="h-px bg-gradient-to-r from-transparent via-white/40 to-transparent w-full max-w-md" />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {/* Subtitle - Fades in after name is formed */}
-              <AnimatePresence>
-                {(animationPhase === 'nameFormed' || animationPhase === 'elementsVisible') && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1, delay: 1.5, ease: "easeOut" }}
-                    className="text-center"
-                  >
-                    <p
-                      className="text-white/80 text-lg md:text-xl tracking-[0.3em] font-light"
-                      style={{
-                        fontFamily: "'Inter', sans-serif",
-                        fontWeight: 200,
-                      }}
-                    >
-                      ARCHITECTS
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* Premium Logo Icon - Fades in with elements */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5, y: 20 }}
-              animate={{
-                opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-                scale: animationPhase === 'elementsVisible' ? 1 : 0.5,
-                y: animationPhase === 'elementsVisible' ? 0 : 20,
-              }}
-              transition={{ duration: 1, delay: 0.8, ease: "easeOut" }}
-              className="absolute -top-8 left-1/2 transform -translate-x-1/2"
-            >
-              <div className="relative">
-                <div className="absolute inset-0 bg-amber-400/20 rounded-sm blur-sm"></div>
-                <div className="relative bg-black/80 p-3 border border-amber-400/30 rounded-sm backdrop-blur-sm">
-                  <Building2 className="w-6 h-6 text-amber-400/80" strokeWidth={1.5} />
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        </div>
-
-        {/* Elegant Loading Indicator - Fades in with elements */}
+      {/* Main content */}
+      <div className="text-center space-y-6">
+        {/* Logo */}
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{
-            opacity: animationPhase === 'elementsVisible' ? 1 : 0,
-            y: animationPhase === 'elementsVisible' ? 0 : 30,
-          }}
-          transition={{ duration: 1, delay: 1.5, ease: "easeOut" }}
-          className="absolute bottom-20 left-1/2 transform -translate-x-1/2"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="flex justify-center mb-4"
         >
-          <div className="flex items-center space-x-8">
-            <div className="flex space-x-1">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-px h-8 bg-gradient-to-t from-white/20 to-white/60 rounded-full"
-                  animate={{
-                    scaleY: [0.4, 1, 0.4],
-                    opacity: [0.3, 1, 0.3],
-                  }}
-                  transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    delay: i * 0.1,
-                    ease: "easeInOut",
-                  }}
-                />
-              ))}
+          <div className="relative">
+            <div className="absolute inset-0 bg-amber-400/20 rounded-lg blur-sm" />
+            <div className="relative bg-black border border-amber-400/30 rounded-lg p-3">
+              <Building2 className="w-6 h-6 text-amber-400" strokeWidth={1.5} />
             </div>
-            <motion.p
-              animate={{ opacity: [0.5, 1, 0.5] }}
-              transition={{
-                duration: 2,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }}
-              className="text-white/60 text-xs tracking-[0.2em] font-light"
-              style={{
-                fontFamily: "'Inter', sans-serif",
-              }}
-            >
-              LOADING
-            </motion.p>
           </div>
         </motion.div>
-      </div>
-    </>
-  );
-};
 
-export default LoadingPage;
+        {/* Company name */}
+        <motion.div
+          initial={{ y: 15, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: "easeOut" }}
+          className="space-y-3"
+        >
+          <h1 className="text-4xl md:text-6xl font-light text-white tracking-[0.1em]">
+            <span style={{ fontFamily: "'Playfair Display', serif" }}>Studio65</span>
+          </h1>
+
+          <div className="flex items-center justify-center space-x-3">
+            <div className="h-px bg-gradient-to-r from-transparent via-white/40 to-transparent w-12" />
+            <div className="w-1 h-1 bg-white/40 rotate-45" />
+            <div className="h-px bg-gradient-to-r from-transparent via-white/40 to-transparent w-12" />
+          </div>
+
+          <p className="text-white/70 text-base tracking-[0.25em] font-light">
+            <span style={{ fontFamily: "'Inter', sans-serif" }}>ARCHITECTS</span>
+          </p>
+        </motion.div>
+
+        {/* Progress bar */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3, delay: 0.2 }}
+          className="w-48 mx-auto space-y-2"
+        >
+          <div className="h-px bg-white/10 rounded-full overflow-hidden">
+            <motion.div
+              className="h-full bg-gradient-to-r from-amber-400/60 to-amber-300/80"
+              initial={{ width: "0%" }}
+              animate={{ width: `${progress}%` }}
+              transition={{ duration: 0.1, ease: "easeOut" }}
+            />
+          </div>
+
+          <div className="flex justify-between items-center text-xs text-white/50">
+            <span style={{ fontFamily: "'Inter', sans-serif" }}>LOADING</span>
+            <span style={{ fontFamily: "'Inter', sans-serif" }}>{progress}%</span>
+          </div>
+        </motion.div>
+
+        {/* Decorative corners */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: progress > 30 ? 1 : 0 }}
+          transition={{ duration: 0.2 }}
+          className="absolute inset-0 pointer-events-none"
+        >
+          {/* Top corners */}
+          <div className="absolute top-6 left-6 w-5 h-5 border-l border-t border-amber-400/30" />
+          <div className="absolute top-6 right-6 w-5 h-5 border-r border-t border-amber-400/30" />
+
+          {/* Bottom corners */}
+          <div className="absolute bottom-6 left-6 w-5 h-5 border-l border-b border-amber-400/30" />
+          <div className="absolute bottom-6 right-6 w-5 h-5 border-r border-b border-amber-400/30" />
+        </motion.div>
+      </div>
+
+      {/* Font loading */}
+      <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@300&family=Inter:wght@200;300&display=swap"
+        rel="stylesheet"
+      />
+    </motion.div>
+  )
+}
+
+export default LoadingPage
