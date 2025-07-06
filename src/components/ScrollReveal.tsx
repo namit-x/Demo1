@@ -1,147 +1,85 @@
-/**
- * ScrollReveal Component
- * Wraps content with scroll-triggered animations
- * Supports multiple animation directions and customizable properties
- */
-import { motion } from 'framer-motion'
-import { useScrollReveal } from '../hooks/useScrollReveal'
-import type { Variants, Transition } from 'framer-motion'
+import { motion } from "framer-motion"
+import type { ReactNode } from "react"
 
 interface ScrollRevealProps {
-  children: React.ReactNode
-  direction?: 'up' | 'down' | 'left' | 'right' | 'fade' | 'scale'
+  children: ReactNode
+  direction?: "up" | "down" | "left" | "right" | "fade" | "scale"
   distance?: number
   duration?: number
   delay?: number
   threshold?: number
-  triggerOnce?: boolean
-  className?: string
   staggerChildren?: number
-  opacity?: {
-    hidden: number
-    visible: number
-  }
 }
 
-export default function ScrollReveal({
-  children,
-  direction = 'up',
-  distance = 50,
-  duration = 0.8,
-  delay = 0,
+export default function ScrollReveal({ 
+  children, 
+  direction = "up", 
+  distance = 50, 
+  duration = 0.8, 
+  delay = 0, 
   threshold = 0.1,
-  triggerOnce = true,
-  className = '',
-  staggerChildren = 0,
-  opacity = { hidden: 0, visible: 1 }
+  staggerChildren 
 }: ScrollRevealProps) {
-  const { elementRef, isVisible } = useScrollReveal({
-    threshold,
-    triggerOnce,
-    delay
-  })
-
-  // Define animation variants based on direction
-  const getAnimationVariants = (): Variants => {
-    const baseTransition: Transition = {
-      duration,
-      ease: [0.25, 0.46, 0.45, 0.94] // Custom cubic bezier curve
+  const getVariants = () => {
+    const baseVariants = {
+      hidden: {},
+      visible: {
+        transition: {
+          duration,
+          delay,
+          ease: [0.25, 0.46, 0.45, 0.94] as const,
+          ...(staggerChildren && { staggerChildren })
+        }
+      }
     }
 
-    const staggerTransition: Transition = staggerChildren > 0 ? {
-      ...baseTransition,
-      staggerChildren,
-      when: "beforeChildren"
-    } : baseTransition
-
     switch (direction) {
-      case 'up':
+      case "up":
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            y: distance,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            y: 0,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0, y: distance },
+          visible: { ...baseVariants.visible, opacity: 1, y: 0 }
         }
-      case 'down':
+      case "down":
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            y: -distance,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            y: 0,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0, y: -distance },
+          visible: { ...baseVariants.visible, opacity: 1, y: 0 }
         }
-      case 'left':
+      case "left":
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            x: distance,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            x: 0,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0, x: distance },
+          visible: { ...baseVariants.visible, opacity: 1, x: 0 }
         }
-      case 'right':
+      case "right":
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            x: -distance,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            x: 0,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0, x: -distance },
+          visible: { ...baseVariants.visible, opacity: 1, x: 0 }
         }
-      case 'scale':
+      case "scale":
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            scale: 0.8,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            scale: 1,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0, scale: 0.8 },
+          visible: { ...baseVariants.visible, opacity: 1, scale: 1 }
         }
-      case 'fade':
+      case "fade":
       default:
         return {
-          hidden: {
-            opacity: opacity.hidden,
-            transition: baseTransition
-          },
-          visible: {
-            opacity: opacity.visible,
-            transition: staggerTransition
-          }
+          ...baseVariants,
+          hidden: { opacity: 0 },
+          visible: { ...baseVariants.visible, opacity: 1 }
         }
     }
   }
 
   return (
     <motion.div
-      ref={elementRef}
-      className={className}
-      variants={getAnimationVariants()}
+      variants={getVariants()}
       initial="hidden"
-      animate={isVisible ? "visible" : "hidden"}
+      whileInView="visible"
+      viewport={{ once: true, amount: threshold }}
     >
       {children}
     </motion.div>

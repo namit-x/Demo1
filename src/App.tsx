@@ -1,9 +1,14 @@
 import { useState, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
-import LoadingPage from './components/LoadingPage';
-import Homepage from './components/Homepage';
+import { TooltipProvider } from "./components/ui/tooltip";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BrowserRouter, Routes, Route } from "react-router";
+import LoadingPage from './components/LoadingPage'
+import Homepage from './pages/Homepage'
 
-function App() {
+const queryClient = new QueryClient();
+
+const App = () => {
   const [showHomePage, setShowHomePage] = useState(false);
   const [loadingComplete, setLoadingComplete] = useState(false);
 
@@ -11,12 +16,12 @@ function App() {
     // Start homepage transition slightly before loading page fully fades
     const homepageTimer = setTimeout(() => {
       setShowHomePage(true);
-    }, 2000); // Start homepage fade-in 0.5s before loading completes
+    }, 1000); // Start homepage fade-in
 
     // Mark loading as complete
     const loadingTimer = setTimeout(() => {
       setLoadingComplete(true);
-    }, 2200); // Total loading duration: 9 seconds
+    }, 1500); // Total loading duration
 
     return () => {
       clearTimeout(homepageTimer);
@@ -25,18 +30,26 @@ function App() {
   }, []);
 
   return (
-    <div className="relative">
-      <AnimatePresence mode="wait">
-        {!loadingComplete && (
-          <LoadingPage key="loading" onComplete={() => setLoadingComplete(true)} />
-        )}
-      </AnimatePresence>
-      
-      {showHomePage && (
-        <Homepage key="homepage" isVisible={showHomePage} />
-      )}
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className="relative bg-charcoal-950">
+          <AnimatePresence mode="wait">
+            {!loadingComplete && (
+              <LoadingPage key="loading" onComplete={() => setLoadingComplete(true)} />
+            )}
+          </AnimatePresence>
+          
+          {showHomePage && (
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Homepage />} />
+              </Routes>
+            </BrowserRouter>
+          )}
+        </div>
+      </TooltipProvider>
+    </QueryClientProvider>
   );
-}
+};
 
 export default App;

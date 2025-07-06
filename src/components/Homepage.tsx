@@ -92,10 +92,6 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
     }
   }
 
-  /**
-   * Page-level animation variants for initial homepage entrance
-   * These control the overall fade-in when transitioning from loading page
-   */
   const pageVariants: Variants = {
     hidden: {
       opacity: 0,
@@ -103,7 +99,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
       filter: "blur(8px)",
       transition: {
         duration: 0.6,
-        ease: [0.23, 0, 0.32, 0] // Reverse ease for exit
+        ease: [0.23, 0, 0.32, 0]
       }
     },
     visible: {
@@ -112,12 +108,12 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
       filter: "blur(0px)",
       transition: {
         duration: 1.5,
-        ease: [0.23, 1, 0.32, 1], // Cubic bezier curve
+        ease: [0.23, 1, 0.32, 1],
         staggerChildren: 0.1,
-        when: "beforeChildren" // Ensure parent animates first
+        when: "beforeChildren"
       }
     },
-    exit: { // For AnimatePresence
+    exit: {
       opacity: 0,
       scale: 0.98,
       filter: "blur(8px)",
@@ -128,16 +124,11 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
     }
   };
 
-  /**
-   * Section-level animation variants for initial page load
-   * These work in conjunction with scroll-triggered animations
-   */
   const sectionVariants: Variants = {
     hidden: {
       opacity: 0,
       y: 30,
       transition: {
-        // Adding exit transition for smoother hide
         duration: 0.5,
         ease: "easeIn"
       }
@@ -148,12 +139,10 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
       transition: {
         duration: 0.8,
         ease: "easeOut",
-        // Add stagger children capability
         when: "beforeChildren",
         staggerChildren: 0.1
       }
     },
-    // Optional: Add a hover state variant
     hover: {
       scale: 1.02,
       transition: {
@@ -162,10 +151,6 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
     }
   };
 
-  /**
-   * Staggered animation variants for grid items and lists
-   * Creates a cascading effect for multiple elements
-   */
   const staggerContainerVariants: Variants = {
     hidden: {
       opacity: 0
@@ -198,7 +183,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
 
   return (
     <motion.div
-      className="min-h-screen bg-black text-white"
+      className="w-full bg-black text-white"
       variants={pageVariants}
       initial="hidden"
       animate={isVisible ? "visible" : "hidden"}
@@ -215,8 +200,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 <Building2 className="w-6 h-6 text-white" strokeWidth={1} />
               </div>
               <div>
-                <h1 className="text-xl font-light tracking-[0.2em] uppercase font-cormorant">Line-Ar-chitects</h1>
-                <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Inspire</p>
+                <h1 className="text-xl font-light tracking-[0.2em] uppercase">Line-Ar-chitects</h1>
+                <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase">Inspire</p>
               </div>
             </div>
             <nav className="hidden md:flex space-x-8">
@@ -224,7 +209,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 <a
                   key={item}
                   href="#"
-                  className="text-sm font-light tracking-wider uppercase hover:text-white/80 transition-colors relative group font-inter"
+                  className="text-sm font-light tracking-wider uppercase hover:text-white/80 transition-colors relative group"
                 >
                   {item}
                   <span className="absolute bottom-0 left-0 w-0 h-px bg-white/60 transition-all duration-300 group-hover:w-full"></span>
@@ -267,7 +252,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="max-w-4xl">
             <motion.h2
-              className="text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-tight leading-none font-playfair"
+              className="text-6xl md:text-8xl lg:text-9xl font-light mb-8 tracking-tight leading-none"
               variants={sectionVariants}
             >
               DESIGNING
@@ -277,7 +262,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
               THAT INSPIRE
             </motion.h2>
             <motion.p
-              className="text-xl md:text-2xl text-white/70 font-light leading-relaxed mb-12 max-w-3xl font-inter"
+              className="text-xl md:text-2xl text-white/70 font-light leading-relaxed mb-12 max-w-3xl"
               variants={sectionVariants}
             >
               We create architectural solutions that blend functionality with aesthetic excellence, transforming visions
@@ -287,11 +272,11 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
               className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6"
               variants={sectionVariants}
             >
-              <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center justify-center font-inter">
+              <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center justify-center">
                 View Projects
                 <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </button>
-              <button className="px-8 py-4 text-sm font-light tracking-wider uppercase text-white/70 hover:text-white transition-colors font-inter">
+              <button className="px-8 py-4 text-sm font-light tracking-wider uppercase text-white/70 hover:text-white transition-colors">
                 Learn More
               </button>
             </motion.div>
@@ -311,7 +296,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
           <div className="max-w-7xl mx-auto px-6">
             <ScrollReveal direction="fade" delay={200}>
               <div className="text-center mb-20">
-                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6">
                   Featured Projects
                 </h3>
                 <div className="w-24 h-px bg-white/30 mx-auto"></div>
@@ -337,8 +322,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
                   <div className="p-8">
-                    <h4 className="text-2xl font-light mb-2 font-cormorant">Modern Villa Complex</h4>
-                    <p className="text-white/80 font-inter">Residential • 2024</p>
+                    <h4 className="text-2xl font-light mb-2">Modern Villa Complex</h4>
+                    <p className="text-white/80">Residential • 2024</p>
                   </div>
                 </div>
               </motion.div>
@@ -354,8 +339,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
                   <div className="p-6">
-                    <h4 className="text-lg font-light mb-1 font-cormorant">Urban Loft</h4>
-                    <p className="text-white/80 text-sm font-inter">Interior • 2024</p>
+                    <h4 className="text-lg font-light mb-1">Urban Loft</h4>
+                    <p className="text-white/80 text-sm">Interior • 2024</p>
                   </div>
                 </div>
               </motion.div>
@@ -371,8 +356,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
                   <div className="p-6">
-                    <h4 className="text-lg font-light mb-1 font-cormorant">Corporate HQ</h4>
-                    <p className="text-white/80 text-sm font-inter">Commercial • 2023</p>
+                    <h4 className="text-lg font-light mb-1">Corporate HQ</h4>
+                    <p className="text-white/80 text-sm">Commercial • 2023</p>
                   </div>
                 </div>
               </motion.div>
@@ -388,8 +373,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                 />
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end">
                   <div className="p-8">
-                    <h4 className="text-xl font-light mb-2 font-cormorant">Cultural Center</h4>
-                    <p className="text-white/80 font-inter">Public Architecture • 2023</p>
+                    <h4 className="text-xl font-light mb-2">Cultural Center</h4>
+                    <p className="text-white/80">Public Architecture • 2023</p>
                   </div>
                 </div>
               </motion.div>
@@ -404,7 +389,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
           <div className="max-w-7xl mx-auto px-6">
             <ScrollReveal direction="right" distance={60} delay={300}>
               <div className="flex justify-between items-center mb-16">
-                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase font-cormorant">Recent Work</h3>
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase">Recent Work</h3>
                 <div className="flex space-x-4">
                   <button
                     onClick={() => scrollProjects("left")}
@@ -444,12 +429,12 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                         className="w-full h-64 object-cover transition-transform duration-700 group-hover:scale-105"
                       />
                       <div className="absolute top-4 left-4">
-                        <span className="px-3 py-1 bg-black/60 backdrop-blur-sm text-xs tracking-wider uppercase font-inter">
+                        <span className="px-3 py-1 bg-black/60 backdrop-blur-sm text-xs tracking-wider uppercase">
                           {project.category}
                         </span>
                       </div>
                     </div>
-                    <h4 className="text-xl font-light tracking-wide font-cormorant">{project.title}</h4>
+                    <h4 className="text-xl font-light tracking-wide">{project.title}</h4>
                   </motion.div>
                 ))}
               </div>
@@ -473,7 +458,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
           <div className="max-w-7xl mx-auto px-6 relative z-10">
             <ScrollReveal direction="fade" delay={200}>
               <div className="text-center mb-20">
-                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6">
                   Our Expertise
                 </h3>
                 <div className="w-24 h-px bg-white/30 mx-auto"></div>
@@ -515,11 +500,11 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                   <div className="w-20 h-20 border border-white/20 rounded-sm mx-auto mb-8 flex items-center justify-center group-hover:border-white/40 transition-colors duration-500">
                     <Building2 className="w-10 h-10 text-white" strokeWidth={1} />
                   </div>
-                  <h4 className="text-2xl font-light tracking-wider uppercase mb-6 font-cormorant">{service.title}</h4>
-                  <p className="text-white/70 font-light leading-relaxed mb-6 font-inter">{service.description}</p>
+                  <h4 className="text-2xl font-light tracking-wider uppercase mb-6">{service.title}</h4>
+                  <p className="text-white/70 font-light leading-relaxed mb-6">{service.description}</p>
                   <ul className="space-y-2">
                     {service.features.map((feature, idx) => (
-                      <li key={idx} className="text-white/60 text-sm tracking-wide font-inter">
+                      <li key={idx} className="text-white/60 text-sm tracking-wide">
                         {feature}
                       </li>
                     ))}
@@ -546,7 +531,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
           <div className="max-w-4xl mx-auto px-6 relative z-10">
             <ScrollReveal direction="down" distance={40} delay={300}>
               <div className="text-center mb-20">
-                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6 font-cormorant">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-6">
                   Client Stories
                 </h3>
                 <div className="w-24 h-px bg-white/30 mx-auto"></div>
@@ -557,15 +542,15 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
               <div className="relative">
                 <div className="text-center">
                   <Quote className="w-12 h-12 text-white/30 mx-auto mb-8" />
-                  <blockquote className="text-2xl md:text-3xl font-light leading-relaxed mb-8 text-white/90 font-cormorant">
+                  <blockquote className="text-2xl md:text-3xl font-light leading-relaxed mb-8 text-white/90">
                     "{testimonials[currentTestimonial].quote}"
                   </blockquote>
                   <div className="space-y-2">
-                    <p className="text-lg font-light tracking-wide font-inter">{testimonials[currentTestimonial].author}</p>
-                    <p className="text-white/60 text-sm tracking-wider uppercase font-inter">
+                    <p className="text-lg font-light tracking-wide">{testimonials[currentTestimonial].author}</p>
+                    <p className="text-white/60 text-sm tracking-wider uppercase">
                       {testimonials[currentTestimonial].role}
                     </p>
-                    <p className="text-white/40 text-xs tracking-wider font-inter">
+                    <p className="text-white/40 text-xs tracking-wider">
                       {testimonials[currentTestimonial].project}
                     </p>
                   </div>
@@ -601,7 +586,7 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
               viewport={{ once: true, amount: 0.2 }}
             >
               <motion.div variants={staggerItemVariants}>
-                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-12 font-cormorant">
+                <h3 className="text-4xl md:text-5xl font-light tracking-[0.2em] uppercase mb-12">
                   Start Your Project
                 </h3>
                 <div className="space-y-8">
@@ -610,8 +595,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                       <Phone className="w-5 h-5 text-white/60" strokeWidth={1} />
                     </div>
                     <div>
-                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Phone</p>
-                      <span className="font-light text-lg font-inter">+1 (555) 123-4567</span>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1">Phone</p>
+                      <span className="font-light text-lg">+1 (555) 123-4567</span>
                     </div>
                   </div>
                   <div className="flex items-center space-x-6">
@@ -619,8 +604,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                       <Mail className="w-5 h-5 text-white/60" strokeWidth={1} />
                     </div>
                     <div>
-                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Email</p>
-                      <span className="font-light text-lg font-inter">info@rkhomedesign.com</span>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1">Email</p>
+                      <span className="font-light text-lg">info@rkhomedesign.com</span>
                     </div>
                   </div>
                   <div className="flex items-center space-x-6">
@@ -628,8 +613,8 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                       <MapPin className="w-5 h-5 text-white/60" strokeWidth={1} />
                     </div>
                     <div>
-                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1 font-inter">Studio</p>
-                      <span className="font-light text-lg font-inter">123 Design Street, Architecture City</span>
+                      <p className="text-white/40 text-sm tracking-wider uppercase mb-1">Studio</p>
+                      <span className="font-light text-lg">123 Design Street, Architecture City</span>
                     </div>
                   </div>
                 </div>
@@ -642,14 +627,14 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                       <input
                         type="text"
                         placeholder="First Name"
-                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors"
                       />
                     </div>
                     <div>
                       <input
                         type="text"
                         placeholder="Last Name"
-                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                        className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors"
                       />
                     </div>
                   </div>
@@ -657,24 +642,24 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                     <input
                       type="email"
                       placeholder="Email Address"
-                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
                     <input
                       type="text"
                       placeholder="Project Type"
-                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors font-inter"
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors"
                     />
                   </div>
                   <div>
                     <textarea
                       placeholder="Tell us about your project..."
                       rows={4}
-                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors resize-none font-inter"
+                      className="w-full bg-transparent border-b border-white/20 py-4 text-white placeholder-white/40 focus:border-white/60 focus:outline-none transition-colors resize-none"
                     ></textarea>
                   </div>
-                  <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center font-inter">
+                  <button className="group px-8 py-4 border border-white/30 text-sm font-light tracking-wider uppercase hover:bg-white hover:text-black transition-all duration-500 flex items-center">
                     Send Message
                     <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -702,22 +687,22 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
                     <Building2 className="w-6 h-6 text-white" strokeWidth={1} />
                   </div>
                   <div>
-                    <h4 className="text-lg font-light tracking-[0.2em] uppercase font-cormorant">Line-Ar-chitects</h4>
-                    <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase font-inter">Inspire</p>
+                    <h4 className="text-lg font-light tracking-[0.2em] uppercase">Line-Ar-chitects</h4>
+                    <p className="text-white/60 text-xs font-light tracking-[0.3em] uppercase">Inspire</p>
                   </div>
                 </div>
-                <p className="text-white/60 font-light leading-relaxed max-w-md font-inter">
+                <p className="text-white/60 font-light leading-relaxed max-w-md">
                   Creating architectural solutions that blend functionality with aesthetic excellence, transforming
                   visions into remarkable living spaces.
                 </p>
               </motion.div>
 
               <motion.div variants={staggerItemVariants}>
-                <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Services</h5>
+                <h5 className="text-sm font-light tracking-wider uppercase mb-6">Services</h5>
                 <ul className="space-y-3">
                   {["Residential Design", "Commercial Spaces", "Interior Planning", "Consultation"].map((service) => (
                     <li key={service}>
-                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
+                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm">
                         {service}
                       </a>
                     </li>
@@ -726,23 +711,23 @@ export default function Homepage({ isVisible = true }: HomepageProps) {
               </motion.div>
 
               <motion.div variants={staggerItemVariants}>
-                <h5 className="text-sm font-light tracking-wider uppercase mb-6 font-inter">Connect</h5>
+                <h5 className="text-sm font-light tracking-wider uppercase mb-6">Connect</h5>
                 <ul className="space-y-3">
                   {["Instagram", "LinkedIn", "Behance", "Pinterest"].map((social) => (
                     <li key={social}>
-                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm font-inter">
+                      <a href="#" className="text-white/60 hover:text-white transition-colors text-sm">
                         {social}
                       </a>
                     </li>
                   ))}
                 </ul>
-                </motion.div>
+              </motion.div>
             </motion.div>
 
             <ScrollReveal direction="fade" delay={400}>
               <div className="border-t border-white/10 pt-8">
                 <div className="text-center">
-                  <p className="text-white/40 text-sm font-light tracking-wider font-inter">
+                  <p className="text-white/40 text-sm font-light tracking-wider">
                     © 2025 Line Architects. All rights reserved.
                   </p>
                 </div>
