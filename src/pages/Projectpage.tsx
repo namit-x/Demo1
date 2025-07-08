@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Grid, List, ArrowRight, MapPin, Calendar, Ruler } from "lucide-react";
-import { allProjects } from "../data/homepageData";
+import { Grid, List, ArrowRight, Calendar, Ruler } from "lucide-react";
+import { projects } from "../data/homepageData";
 import { staggerContainerVariants, staggerItemVariants } from "../utils/motionVariants";
-import Navigation from "../components/Navigation";
+import Header from "../components/Header";
 
 export default function ProjectsPage() {
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -11,14 +11,14 @@ export default function ProjectsPage() {
 
   const categories = ["All", "Residential", "Commercial", "Interior", "Public", "Hospitality", "Educational"];
 
-  const filteredProjects = selectedCategory === "All" 
-    ? allProjects 
-    : allProjects.filter(project => project.category === selectedCategory);
+  const filteredProjects = selectedCategory === "All"
+    ? projects
+    : projects.filter(project => project.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-charcoal-950 via-charcoal-900 to-charcoal-950 text-white">
-      <Navigation />
-      
+      <Header />
+
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 overflow-hidden">
         <div className="absolute inset-0">
@@ -41,7 +41,7 @@ export default function ProjectsPage() {
               Our <span className="text-gold-400">Projects</span>
             </h1>
             <p className="font-serif text-xl md:text-2xl text-white/80 font-light leading-relaxed max-w-4xl mx-auto text-balance">
-              Explore our portfolio of architectural excellence, where each project tells a unique story of innovation, 
+              Explore our portfolio of architectural excellence, where each project tells a unique story of innovation,
               sustainability, and timeless design.
             </p>
           </motion.div>
@@ -58,11 +58,10 @@ export default function ProjectsPage() {
                 <button
                   key={category}
                   onClick={() => setSelectedCategory(category)}
-                  className={`px-6 py-3 font-sans text-sm font-light tracking-wider uppercase transition-all duration-300 border backdrop-blur-sm ${
-                    selectedCategory === category
-                      ? "bg-gold-400 text-charcoal-950 border-gold-400"
-                      : "border-white/20 text-white/70 hover:border-gold-400/40 hover:text-gold-400"
-                  }`}
+                  className={`px-6 py-3 font-sans text-sm font-light tracking-wider uppercase transition-all duration-300 border backdrop-blur-sm ${selectedCategory === category
+                    ? "bg-gold-400 text-charcoal-950 border-gold-400"
+                    : "border-white/20 text-white/70 hover:border-gold-400/40 hover:text-gold-400"
+                    }`}
                 >
                   {category}
                 </button>
@@ -74,17 +73,15 @@ export default function ProjectsPage() {
               <div className="flex items-center space-x-2 border border-white/20 rounded-sm overflow-hidden backdrop-blur-sm">
                 <button
                   onClick={() => setViewMode("grid")}
-                  className={`p-3 transition-colors ${
-                    viewMode === "grid" ? "bg-gold-400/20 text-gold-400" : "text-white/60 hover:text-gold-400"
-                  }`}
+                  className={`p-3 transition-colors ${viewMode === "grid" ? "bg-gold-400/20 text-gold-400" : "text-white/60 hover:text-gold-400"
+                    }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode("list")}
-                  className={`p-3 transition-colors ${
-                    viewMode === "list" ? "bg-gold-400/20 text-gold-400" : "text-white/60 hover:text-gold-400"
-                  }`}
+                  className={`p-3 transition-colors ${viewMode === "list" ? "bg-gold-400/20 text-gold-400" : "text-white/60 hover:text-gold-400"
+                    }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
@@ -132,24 +129,11 @@ export default function ProjectsPage() {
                         {project.category}
                       </span>
                     </div>
-                    <div className="absolute top-4 right-4">
-                      <span className={`px-3 py-1 backdrop-blur-sm font-sans text-xs tracking-wider uppercase ${
-                        project.status === "Completed" 
-                          ? "bg-green-500/20 text-green-400" 
-                          : "bg-gold-400/20 text-gold-400"
-                      }`}>
-                        {project.status}
-                      </span>
-                    </div>
                   </div>
                   <div className="space-y-4">
                     <h3 className="font-display text-2xl font-light tracking-wide">{project.title}</h3>
                     <p className="text-white/60 font-serif text-sm leading-relaxed">{project.description}</p>
                     <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center space-x-2 text-white/50">
-                        <MapPin className="w-4 h-4 text-gold-400" />
-                        <span className="font-sans">{project.location}</span>
-                      </div>
                       <div className="flex items-center space-x-2 text-white/50">
                         <Calendar className="w-4 h-4 text-gold-400" />
                         <span className="font-sans">{project.year}</span>
@@ -197,22 +181,12 @@ export default function ProjectsPage() {
                     </div>
                     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                       <div>
-                        <p className="text-white/40 font-sans text-xs tracking-wider uppercase mb-1">Location</p>
-                        <p className="text-white/80 font-serif text-sm">{project.location}</p>
-                      </div>
-                      <div>
                         <p className="text-white/40 font-sans text-xs tracking-wider uppercase mb-1">Year</p>
                         <p className="text-white/80 font-serif text-sm">{project.year}</p>
                       </div>
                       <div>
                         <p className="text-white/40 font-sans text-xs tracking-wider uppercase mb-1">Area</p>
                         <p className="text-white/80 font-serif text-sm">{project.area}</p>
-                      </div>
-                      <div>
-                        <p className="text-white/40 font-sans text-xs tracking-wider uppercase mb-1">Status</p>
-                        <p className={`font-serif text-sm ${
-                          project.status === "Completed" ? "text-green-400" : "text-gold-400"
-                        }`}>{project.status}</p>
                       </div>
                     </div>
                     <button className="group px-8 py-3 border border-gold-400/30 font-sans text-sm font-light tracking-wider uppercase hover:bg-gold-400 hover:text-charcoal-950 transition-all duration-300 flex items-center backdrop-blur-sm">
