@@ -16,7 +16,7 @@ const App = () => {
     // Start homepage transition slightly before loading page fully fades
     const homepageTimer = setTimeout(() => {
       setShowHomePage(true);
-    }, 1000); // Start homepage fade-in
+    }, 100); // Start homepage fade-in
 
     // Mark loading as complete
     const loadingTimer = setTimeout(() => {
@@ -42,7 +42,7 @@ const App = () => {
           {showHomePage && (
             <BrowserRouter>
               <Routes>
-                <Route path="/" element={<Homepage />} />
+                <Route path="/" element={<Homepage isVisible={showHomePage} />} />
               </Routes>
             </BrowserRouter>
           )}

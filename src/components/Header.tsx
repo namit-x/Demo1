@@ -5,7 +5,7 @@ import { sectionVariants } from "../utils/motionVariants";
 export default function Header() {
   return (
     <motion.header
-      className="border-b border-white/10 relative z-50 bg-charcoal-950/95 backdrop-blur-md fixed w-full top-0"
+      className="border-b border-white/10 z-50 bg-charcoal-950/95 backdrop-blur-md fixed w-full top-0"
       variants={sectionVariants}
     >
       <div className="max-w-7xl mx-auto px-6 py-6">
@@ -15,8 +15,8 @@ export default function Header() {
               <Building2 className="w-6 h-6 text-gold-400" strokeWidth={1.2} />
             </div>
             <div>
-              <h1 className="font-display text-xl font-light tracking-wide">Studio65</h1>
-              <p className="text-gold-400/70 text-xs font-sans font-light tracking-widest uppercase">Architects</p>
+              <h1 className="font-display text-xl font-light tracking-wide">Advance Architect</h1>
+              <p className="text-gold-400/70 text-xs font-sans font-light tracking-widest uppercase">Premium</p>
             </div>
           </div>
           <nav className="hidden md:flex space-x-8">

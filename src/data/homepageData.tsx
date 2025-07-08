@@ -1,7 +1,7 @@
 export const testimonials = [
     {
       quote:
-        "Studio65 transformed our vision into a masterpiece. Their attention to detail and innovative approach exceeded all expectations. The team's ability to understand our needs and translate them into stunning architectural solutions is truly remarkable.",
+        "Advance Architect transformed our vision into a masterpiece. Their attention to detail and innovative approach exceeded all expectations. The team's ability to understand our needs and translate them into stunning architectural solutions is truly remarkable.",
       author: "Sarah Mitchell",
       role: "Homeowner",
       project: "Modern Villa, Beverly Hills",
@@ -9,7 +9,7 @@ export const testimonials = [
     },
     {
       quote:
-        "Working with Studio65 was an exceptional experience. They understood our brand perfectly and created a space that reflects our company values while being incredibly functional. The project was delivered on time and within budget.",
+        "Working with Advance Architect was an exceptional experience. They understood our brand perfectly and created a space that reflects our company values while being incredibly functional. The project was delivered on time and within budget.",
       author: "David Chen",
       role: "CEO, Tech Innovations",
       project: "Corporate Headquarters",

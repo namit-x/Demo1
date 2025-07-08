@@ -14,7 +14,7 @@ interface HomepageProps {
   isVisible?: boolean;
 }
 
-export default function Homepage({ isVisible = true }: HomepageProps) {
+export default function Homepage({ isVisible }: HomepageProps) {
   return (
     <motion.div
       className="w-full bg-charcoal-950 text-white"

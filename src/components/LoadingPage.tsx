@@ -71,7 +71,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({ onComplete }) => {
           className="space-y-3"
         >
           <h1 className="font-display text-4xl md:text-6xl font-light text-white tracking-[0.1em]">
-            Studio65
+            Advance Architect
           </h1>
 
           <div className="flex items-center justify-center space-x-3">
@@ -81,7 +81,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({ onComplete }) => {
           </div>
 
           <p className="text-white/70 font-sans text-base tracking-[0.25em] font-light uppercase">
-            Architects
+            Premium
           </p>
         </motion.div>
 
