@@ -84,7 +84,6 @@ export const testimonials = [
   
   export const stats = [
     { number: "150+", label: "Projects Completed", icon: "building-2" },
-    { number: "25+", label: "Awards Won", icon: "award" },
     { number: "500+", label: "Happy Clients", icon: "users" },
     { number: "15+", label: "Years Experience", icon: "calendar" },
   ];

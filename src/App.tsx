@@ -21,7 +21,7 @@ const App = () => {
     // Mark loading as complete
     const loadingTimer = setTimeout(() => {
       setLoadingComplete(true);
-    }, 1500); // Total loading duration
+    }, 3000); // Total loading duration
 
     return () => {
       clearTimeout(homepageTimer);

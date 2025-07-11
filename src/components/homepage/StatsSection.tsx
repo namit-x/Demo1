@@ -15,7 +15,7 @@ export default function StatsSection() {
     <section className="py-20 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6">
         <motion.div
-          className="grid grid-cols-2 md:grid-cols-4 gap-8"
+          className="grid grid-cols-2 md:grid-cols-3 gap-8"
           variants={staggerContainerVariants}
           initial="hidden"
           whileInView="visible"

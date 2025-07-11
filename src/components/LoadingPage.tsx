@@ -19,9 +19,9 @@ const LoadingPage: React.FC<LoadingPageProps> = ({ onComplete }) => {
           setTimeout(() => onComplete(), 10);
           return 100;
         }
-        return prev + 10;
+        return prev + 7; // Loading Speed controller
       });
-    }, 100); // 100ms intervals for 1000ms total
+    }, 100);
 
     return () => clearInterval(interval);
   }, [onComplete]);
@@ -81,7 +81,7 @@ const LoadingPage: React.FC<LoadingPageProps> = ({ onComplete }) => {
           </div>
 
           <p className="text-white/70 font-sans text-base tracking-[0.25em] font-light uppercase">
-            Premium
+          Designs that speak. Spaces that breathe
           </p>
         </motion.div>
 
